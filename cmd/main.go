@@ -1,6 +1,7 @@
 package main
 
 import (
+	"assignment_2"
 	"fmt"
 	"log"
 	"net/http"
@@ -17,7 +18,7 @@ func main() {
 	if port == "" {
 		port = "8080"
 	}
-	http.HandleFunc("/", assignment_2.handlerNil)
+	http.HandleFunc("/", assignment_2.HandlerNil)
 	http.HandleFunc("/repocheck/v1/commits", assignment_2.HandlerCommits)
 	http.HandleFunc("/repocheck/v1/languages", assignment_2.HandlerLanguages)
 	http.HandleFunc("/repocheck/v1/issues", assignment_2.HandlerIssues)
