@@ -19,9 +19,9 @@ func main() {
 		port = "8080"
 	}
 	http.HandleFunc("/", assignment_2.HandlerNil)
-	http.HandleFunc("/repocheck/v1/commits/", assignment_2.HandlerCommits)
-	http.HandleFunc("/repocheck/v1/languages/", assignment_2.HandlerLanguages)
-	http.HandleFunc("/repocheck/v1/issues/", assignment_2.HandlerIssues)
+	http.HandleFunc("/repocheck/v1/commits/", assignment_2.HandlerCommits)     // ?limit=4&auth=<access-token>
+	http.HandleFunc("/repocheck/v1/languages/", assignment_2.HandlerLanguages) // ?limit=4&auth=<access-token>
+	http.HandleFunc("/repocheck/v1/issues/", assignment_2.HandlerIssues)       // ?type=users|labels&auth=<access-token>
 	http.HandleFunc("/repocheck/v1/status/", assignment_2.HandlerStatus)
 	http.HandleFunc("/repocheck/v1/webhooks/", assignment_2.HandlerWebhooks)
 
