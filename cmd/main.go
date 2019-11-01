@@ -17,7 +17,12 @@ func main() {
 	if port == "" {
 		port = "8080"
 	}
-	//http.HandleFunc("/", handlerNil)
+	http.HandleFunc("/", assignment_2.handlerNil)
+	http.HandleFunc("/repocheck/v1/commits", assignment_2.HandlerCommits)
+	http.HandleFunc("/repocheck/v1/languages", assignment_2.HandlerLanguages)
+	http.HandleFunc("/repocheck/v1/issues", assignment_2.HandlerIssues)
+	http.HandleFunc("/repocheck/v1/status", assignment_2.HandlerStatus)
+	http.HandleFunc("/repocheck/v1/webhooks", assignment_2.HandlerWebhooks)
 
 	// print to console
 	fmt.Println("Program started: ", StartTime)
