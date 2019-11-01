@@ -1,4 +1,4 @@
-package assignment_2
+package assignment2
 
 // Status struct for /status/ endpoint
 type Status struct {
