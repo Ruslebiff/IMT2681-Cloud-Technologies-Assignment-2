@@ -25,3 +25,15 @@ type Commit struct {
 	Repos []Result
 	Auth  bool
 }
+
+// Projectinfo struct for info about specific project
+type Projectinfo struct {
+	Languages []string
+	Auth      bool
+}
+
+// LangCount struct for name of language and its counted number of occurrences in projects
+type LangCount struct {
+	LanguageName string
+	Count        int
+}

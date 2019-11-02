@@ -113,10 +113,115 @@ func HandlerCommits(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(c)                                    // Encode struct to JSON
 }
 
-// HandlerLanguages returns the languages used in given projects by dist. in descending order
+// HandlerLanguages returns the languages used in given projects by distribution in descending order
 func HandlerLanguages(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Unimplemented handler used")                                        // error to console
-	http.Error(w, "This endpoint is not implemented yet", http.StatusNotImplemented) // error to http
+	var p = &Projectinfo{}     // languages[] + auth bool
+	var repos []Repo           // temp storage for all repos
+	var repolanguages []string // list of all languages used in each project
+
+	limit := r.URL.Query().Get("limit")
+	auth := r.URL.Query().Get("auth")
+
+	if limit == "" { // if no limit in url
+		limit = "5" // set default limit
+	}
+
+	if auth != "" {
+		p.Auth = true
+	} else {
+		p.Auth = false
+	}
+
+	url1 := GitLabRoot + "v4/projects/"
+	url2 := GitLabRoot + "v4/projects?per_page=1"
+
+	resp, err := http.Get(url2 + "&private_token=" + auth)
+	if err != nil {
+		http.Error(w, "Bad Request", http.StatusBadRequest)
+	}
+
+	totalpages, err := strconv.Atoi(resp.Header.Get("X-Total-Pages"))
+	if err != nil {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+	}
+
+	for i := 1; i <= totalpages; i++ {
+		var temp []Repo
+
+		pagenumber := strconv.Itoa(i)
+		resp, err := http.Get(url2 + "&page=" + pagenumber + "&private_token=" + auth)
+		if err != nil {
+			http.Error(w, "Bad Request", http.StatusBadRequest)
+			return
+		}
+
+		jsonresponse, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			fmt.Println(http.StatusInternalServerError)
+			return
+		}
+
+		json.Unmarshal([]byte(jsonresponse), &temp)
+		if err != nil {
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
+		repos = append(repos, temp...) // add each page to repos array
+	}
+
+	for _, j := range repos {
+		langmap := make(map[string]float64)
+		resp, err := http.Get(url1 + strconv.Itoa(j.ID) + "/languages?private_token=" + auth)
+		if err != nil {
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			fmt.Println(http.StatusInternalServerError)
+			return
+		}
+
+		if resp.StatusCode == http.StatusOK { // if repo has /languages/
+			jsonresponse, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+				fmt.Println(http.StatusInternalServerError)
+				return
+			}
+
+			json.Unmarshal([]byte(jsonresponse), &langmap)
+			if err != nil {
+				http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+				return
+			}
+
+			for lang := range langmap {
+				repolanguages = append(repolanguages, lang)
+			}
+		}
+	}
+
+	langcounter := countduplicates(repolanguages) // Languages and their counted number
+	var langcounterarray []LangCount              // Turn langcounter into an array
+	for l, c := range langcounter {
+		langcounterarray = append(langcounterarray, LangCount{l, c})
+	}
+
+	sort.Slice(langcounterarray, func(i, j int) bool { // sort languages by counted value
+		return langcounterarray[i].Count > langcounterarray[j].Count
+	})
+
+	limitint, err := strconv.Atoi(limit) // limit from url query to int
+	if err != nil {
+		return
+	}
+
+	if limitint > len(langcounterarray) { // make sure limit doesn't extend number of languages
+		limitint = len(langcounterarray)
+	}
+	for i := 0; i < limitint; i++ {
+		p.Languages = append(p.Languages, langcounterarray[i].LanguageName)
+	}
+	http.Header.Add(w.Header(), "content-type", "application/json") // json header
+	json.NewEncoder(w).Encode(p)                                    // Encode struct to JSON
 }
 
 // HandlerIssues returns the name of the users or labels (see parameters) for a given project
