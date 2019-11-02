@@ -6,14 +6,9 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"time"
 )
 
-// StartTime contains the timestamp when the program started
-var StartTime = time.Now()
-
 func main() {
-
 	port := os.Getenv("PORT") // auto assign port, needed for heroku support
 	if port == "" {
 		port = "8080"
@@ -26,7 +21,7 @@ func main() {
 	http.HandleFunc("/repocheck/v1/webhooks/", assignment2.HandlerWebhooks)
 
 	// print to console
-	fmt.Println("Program started: ", StartTime)
+	fmt.Println("Program started: ", assignment2.StartTime)
 	fmt.Println("Listening on port " + port)
 
 	log.Fatal(http.ListenAndServe(":"+port, nil))

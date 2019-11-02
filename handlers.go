@@ -1,8 +1,10 @@
 package assignment2
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
+	"time"
 )
 
 // HandlerNil is the default http handler
@@ -31,8 +33,24 @@ func HandlerIssues(w http.ResponseWriter, r *http.Request) {
 
 // HandlerStatus returns information about availability of invoked service and database connectivity
 func HandlerStatus(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Unimplemented handler used")                                        // error to console
-	http.Error(w, "This endpoint is not implemented yet", http.StatusNotImplemented) // error to http
+	fmt.Fprintln(w, "HandlerStatus is not finished yet.") // TO BE REMOVED
+	var S = &Status{}
+
+	gitlabget, err := http.Get(GitLabRoot)
+	if err != nil {
+		http.Error(w, "API lookup failed", http.StatusServiceUnavailable)
+		fmt.Println(http.StatusServiceUnavailable)
+	}
+	// close connection, prevent resource leak if get-request fails
+	defer gitlabget.Body.Close()
+
+	S.GitLab = gitlabget.StatusCode
+	S.Version = "V1"
+	elapsed := time.Since(StartTime)
+	S.Uptime = elapsed.Seconds()
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(S)
 }
 
 // HandlerWebhooks handles webhooks
