@@ -193,8 +193,6 @@ func HandlerLanguages(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			fmt.Println(langmap)
-
 			for lang := range langmap { // add langmap for this repo to repolanguages
 				repolanguages = append(repolanguages, lang)
 			}
