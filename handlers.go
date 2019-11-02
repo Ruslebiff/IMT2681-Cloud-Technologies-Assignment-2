@@ -33,24 +33,37 @@ func HandlerIssues(w http.ResponseWriter, r *http.Request) {
 
 // HandlerStatus returns information about availability of invoked service and database connectivity
 func HandlerStatus(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "HandlerStatus is not finished yet.") // TO BE REMOVED
-	var S = &Status{}
 
+	//fmt.Fprintln(w, "HandlerStatus is not finished yet.") // TO BE REMOVED
+	var s = &Status{}
+
+	// GET-request to gGitLab API
 	gitlabget, err := http.Get(GitLabRoot)
 	if err != nil {
 		http.Error(w, "API lookup failed", http.StatusServiceUnavailable)
 		fmt.Println(http.StatusServiceUnavailable)
 	}
-	// close connection, prevent resource leak if get-request fails
+	/*
+		dbget, err := http.Get(DatabaseRoot)
+		if err != nil {
+			http.Error(w, "Database lookup failed", http.StatusServiceUnavailable)
+			fmt.Println(http.StatusServiceUnavailable)
+
+		}
+	*/
+	// Close connection, prevent resource leak if get-request fails
 	defer gitlabget.Body.Close()
 
-	S.GitLab = gitlabget.StatusCode
-	S.Version = "V1"
+	// Assign values to struct
+	s.GitLab = gitlabget.StatusCode
+	//s.Database = dbget.StatusCode
+	s.Database = 501 // dummy, to be removed when database is implemented
+	s.Version = "V1"
 	elapsed := time.Since(StartTime)
-	S.Uptime = elapsed.Seconds()
+	s.Uptime = elapsed.Seconds()
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(S)
+	http.Header.Add(w.Header(), "content-type", "application/json")
+	json.NewEncoder(w).Encode(s) // Encode struct to JSON
 }
 
 // HandlerWebhooks handles webhooks
