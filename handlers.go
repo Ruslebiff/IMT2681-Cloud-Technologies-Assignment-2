@@ -171,7 +171,7 @@ func HandlerLanguages(w http.ResponseWriter, r *http.Request) {
 	}
 
 	for _, j := range repos {
-		langmap := make(map[string]float64)
+		langmap := make(map[string]float64) // current repo's languages and percentage value
 		resp, err := http.Get(url1 + strconv.Itoa(j.ID) + "/languages?private_token=" + auth)
 		if err != nil {
 			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
@@ -193,7 +193,9 @@ func HandlerLanguages(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			for lang := range langmap {
+			fmt.Println(langmap)
+
+			for lang := range langmap { // add langmap for this repo to repolanguages
 				repolanguages = append(repolanguages, lang)
 			}
 		}
