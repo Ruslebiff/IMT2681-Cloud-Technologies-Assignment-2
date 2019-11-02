@@ -105,7 +105,7 @@ func HandlerCommits(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	for i := 1; i <= limitint; i++ {
+	for i := 0; i < limitint; i++ {
 		c.Repos = append(c.Repos, results[i])
 	}
 
