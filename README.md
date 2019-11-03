@@ -21,7 +21,7 @@ POST-request to "/repocheck/v1/webhooks/" to register new webhook, need JSON bod
 }
 
 # File descriptions: 
-main.go         - main function to run the application
+main.go         - main function to run the application\n
 globals.go      - Global variables and consts are stored here, including API URL.
 structs.go      - All struct types
 handler.go      - All HTTP handlers
