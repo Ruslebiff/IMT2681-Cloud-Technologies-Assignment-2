@@ -18,7 +18,7 @@ POST-request to "/repocheck/v1/webhooks/" to register new webhook, need JSON bod
 {\
     "event": "your-event-type",\
 	"url": "yout-webhook-url"
-}\
+}
 
 # File descriptions: 
 main.go         - main function to run the application\
