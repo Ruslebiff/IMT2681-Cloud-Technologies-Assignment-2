@@ -18,6 +18,11 @@ POST-request to "/repocheck/v1/webhooks/" to register new webhook, need JSON bod
 {\
     "event": "your-event-type",\
 	"url": "yout-webhook-url"\
+}\
+Example webhook registration:\
+{\
+    "event": "commits",\
+	"url": "http://webhook.site/08e1e38c-9ee4-4782-92e4-a09339bc0aaa"\
 }
 
 # File descriptions: 
