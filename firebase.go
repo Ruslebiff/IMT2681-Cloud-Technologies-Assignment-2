@@ -20,7 +20,7 @@ func DBInit() error {
 	fb.Ctx = context.Background()
 
 	// opt = service account: load credentials file that you downloaded from project's settings. This is the access token to the database
-	opt := option.WithCredentialsFile("./assignment2-2c6b0-firebase-adminsdk-9dvth-77d8aa990f.json")
+	opt := option.WithCredentialsFile(Firebasecredentials)
 	app, err := firebase.NewApp(context.Background(), nil, opt)
 	if err != nil {
 		return fmt.Errorf("error initializing app: %v", err)

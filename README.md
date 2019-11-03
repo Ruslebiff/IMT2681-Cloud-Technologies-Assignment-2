@@ -32,4 +32,5 @@ firebase.go     - Database functions
 If you copy this repo, you can make your own Firebase database for this program to store webhooks. \
 To connect to database, you need an access token file. Download this from the Firebase project settings (service accounts) and save it in the root folder for this application. Do NOT share this file with anyone. It contains your own private key for accessing the database. \
 Example name for this file is assignment2-2c6b0-firebase-adminsdk-9dvth-77d8aa990f.json\
-It is required to have a json file like this for the program to work. 
+It is required to have a json file like this for the program to work.\
+Edit the file name in globals.go 
