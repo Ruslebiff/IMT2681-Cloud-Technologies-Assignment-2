@@ -270,7 +270,6 @@ func HandlerStatus(w http.ResponseWriter, r *http.Request) {
 func HandlerWebhooks(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodPost:
-		fmt.Println("POST used")
 		webhook := Webhookreg{}
 		err := json.NewDecoder(r.Body).Decode(&webhook)
 		if err != nil {
@@ -288,7 +287,6 @@ func HandlerWebhooks(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Webhook " + webhook.URL + " registered")
 
 	case http.MethodGet:
-		fmt.Println("GET used")
 		parts := strings.Split(r.URL.String(), "/")
 		if parts[4] != "" {
 			// print only the specified webhook by id
@@ -303,7 +301,6 @@ func HandlerWebhooks(w http.ResponseWriter, r *http.Request) {
 			json.NewEncoder(w).Encode(webhook)                              // Encode it
 		} else {
 			// create list of all webhooks
-			fmt.Println("Get all webhooks used")
 			var webhooks []Webhookreg    // temp storage for all webhooks from db
 			webhooks, err := DBReadall() // read from db into webhooks array
 			if err != nil {
@@ -316,7 +313,6 @@ func HandlerWebhooks(w http.ResponseWriter, r *http.Request) {
 		}
 
 	case http.MethodDelete:
-		fmt.Println("DELETE used")
 		parts := strings.Split(r.URL.String(), "/")
 		if parts[4] != "" {
 			webhookid := parts[4]      // find id of webhook
