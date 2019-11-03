@@ -55,9 +55,9 @@ type Webhookreg struct {
 
 // WebhookPayload struct
 type WebhookPayload struct {
-	Event      string
-	Parameters []string
-	Time       time.Time
+	Event      string `json:"event"`
+	Parameters string `json:"parameters"`
+	Time       string `json:"time"`
 }
 
 // Firebase struct
