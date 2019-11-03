@@ -12,7 +12,8 @@ import (
 )
 
 // HandlerNil is the default http handler
-func HandlerNil(w http.ResponseWriter, r *http.Request) 
+func HandlerNil(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Default Handler: Invalid request received.") // error to console
 	http.Error(w, "Invalid request", http.StatusBadRequest)   // error to http
 }
 
