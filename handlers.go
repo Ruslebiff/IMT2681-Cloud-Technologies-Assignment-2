@@ -50,11 +50,6 @@ func HandlerCommits(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 	}
 
-	//	totalRepositories, err := strconv.Atoi(resp.Header.Get("X-Total"))
-	//	if err != nil {
-	//		http.Error(w, "Unauthorized", http.StatusUnauthorized)
-	//	}
-
 	for i := 1; i <= totalpages; i++ {
 		var temp []Repo
 
