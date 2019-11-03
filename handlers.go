@@ -112,6 +112,9 @@ func HandlerCommits(w http.ResponseWriter, r *http.Request) {
 
 	http.Header.Add(w.Header(), "content-type", "application/json") // json header
 	json.NewEncoder(w).Encode(c)                                    // Encode struct to JSON
+
+	// Call to webhooks:
+	CallWebhooks("commits", "Limit = "+limit+" and Auth = "+auth, time.Now())
 }
 
 // HandlerLanguages returns the languages used in given projects by distribution in descending order
