@@ -45,7 +45,7 @@ type LangCount struct {
 	Count        int
 }
 
-// Webhookreg struct
+// Webhookreg struct for registering a webhook and saving it to database
 type Webhookreg struct {
 	ID    string
 	Event string `json:"event"`
@@ -53,14 +53,14 @@ type Webhookreg struct {
 	Time  time.Time
 }
 
-// WebhookPayload struct
+// WebhookPayload struct for whats sent when we invoke a webhook
 type WebhookPayload struct {
 	Event      string `json:"event"`
 	Parameters string `json:"parameters"`
 	Time       string `json:"time"`
 }
 
-// Firebase struct
+// Firebase struct for database
 type Firebase struct {
 	Ctx    context.Context
 	Client *firestore.Client
