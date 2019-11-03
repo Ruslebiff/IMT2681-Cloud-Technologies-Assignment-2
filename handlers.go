@@ -296,7 +296,7 @@ func HandlerWebhooks(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		fmt.Println("Webhook " + webhook.URL + " registered")
+		fmt.Println("Webhook registration : URL " + webhook.URL + " registered with ID " + webhook.ID)
 
 		// Call to webhooks:
 		CallWebhooks("webhookregistration", "Registered webhook with ID: "+webhook.ID+" for event: "+webhook.Event, time.Now())
@@ -341,7 +341,7 @@ func HandlerWebhooks(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			fmt.Println("Webhook with id" + webhookid + " deleted from database.")
+			fmt.Println("Webhook deletion : ID " + webhookid + " deleted from database.")
 			CallWebhooks("webhookdelete", "Deleted webhook with id: "+webhookid, time.Now())
 
 		} else {
