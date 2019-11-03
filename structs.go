@@ -65,3 +65,8 @@ type Firebase struct {
 	Ctx    context.Context
 	Client *firestore.Client
 }
+
+// Issuerepo struct for /issues/ handler
+type Issuerepo struct {
+	Projectname string `json:"project"`
+}

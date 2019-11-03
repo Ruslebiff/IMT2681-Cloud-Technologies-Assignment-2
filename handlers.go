@@ -228,9 +228,54 @@ func HandlerLanguages(w http.ResponseWriter, r *http.Request) {
 
 // HandlerIssues returns the name of the users or labels (see parameters) for a given project
 func HandlerIssues(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Unimplemented handler used")                                        // error to console
-	http.Error(w, "This endpoint is not implemented yet", http.StatusNotImplemented) // error to http
+	//fmt.Println("Unimplemented handler used")                                        // error to console
+	//http.Error(w, "This endpoint is not implemented yet", http.StatusNotImplemented) // error to http
 
+	switch r.Method {
+	case http.MethodPost:
+		fmt.Println("Issues MethodPost used")
+		project := Issuerepo{}
+		temprepo := Repo{}
+		err := json.NewDecoder(r.Body).Decode(&project) // get the project name from body
+		if err != nil {
+			http.Error(w, "Bad request", http.StatusBadRequest)
+		}
+
+		url := GitLabRoot + "v4/projects?search=" + project.Projectname
+
+		// get id from project
+		// new url with /projects/<id>/issues
+		// get issue stuff from there
+		// encode it
+
+		resp, err := http.Get(url)
+		if err != nil {
+			http.Error(w, "Bad Request", http.StatusBadRequest)
+			return
+		}
+
+		jsonresponse, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			fmt.Println(http.StatusInternalServerError)
+			return
+		}
+
+		json.Unmarshal([]byte(jsonresponse), &temprepo)
+		if err != nil {
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
+		fmt.Println(temprepo)
+		a := strconv.Itoa(temprepo.ID)
+		fmt.Println("temprepo id: " + a)
+
+	case http.MethodGet:
+		fmt.Println("Issues MethodGet used")
+	default:
+		fmt.Println("Issues DEFAULT used")
+		http.Error(w, "invalid http method used", http.StatusBadRequest)
+	} // switch end
 	// Call to webhooks:
 	CallWebhooks("issues", "", time.Now())
 }
