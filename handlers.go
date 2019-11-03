@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"sort"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -242,21 +243,21 @@ func HandlerStatus(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "API lookup failed", http.StatusServiceUnavailable)
 		fmt.Println(http.StatusServiceUnavailable)
 	}
-	/*
-		dbget, err := http.Get(DatabaseRoot)
-		if err != nil {
-			http.Error(w, "Database lookup failed", http.StatusServiceUnavailable)
-			fmt.Println(http.StatusServiceUnavailable)
 
-		}
-	*/
+	dbget, err := http.Get(DatabaseRoot)
+	if err != nil {
+		http.Error(w, "Database lookup failed", http.StatusServiceUnavailable)
+		fmt.Println(http.StatusServiceUnavailable)
+
+	}
+
 	// Close connection, prevent resource leak if get-request fails
 	defer gitlabget.Body.Close()
 
 	// Assign values to struct
 	s.GitLab = gitlabget.StatusCode
-	//s.Database = dbget.StatusCode
-	s.Database = 501 // dummy, to be removed when database is implemented
+	s.Database = dbget.StatusCode
+	//s.Database = 501 // dummy, to be removed when database is implemented
 	s.Version = "V1"
 	elapsed := time.Since(StartTime)
 	s.Uptime = elapsed.Seconds()
@@ -267,6 +268,73 @@ func HandlerStatus(w http.ResponseWriter, r *http.Request) {
 
 // HandlerWebhooks handles webhooks
 func HandlerWebhooks(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Unimplemented handler used")                                        // error to console
-	http.Error(w, "This endpoint is not implemented yet", http.StatusNotImplemented) // error to http
+	switch r.Method {
+	case http.MethodPost:
+		fmt.Println("POST used")
+		webhook := Webhookreg{}
+		err := json.NewDecoder(r.Body).Decode(&webhook)
+		if err != nil {
+			http.Error(w, "Bad request", http.StatusBadRequest)
+		}
+
+		webhook.Time = time.Now()
+		fmt.Println(webhook.Event)
+		fmt.Println(webhook.URL)
+
+		_, err = DBSave(&webhook)
+		if err != nil {
+			http.Error(w, "Error occurred when saving", http.StatusInternalServerError)
+			return
+		}
+
+		fmt.Println("Webhook " + webhook.URL + " registered")
+
+	case http.MethodGet:
+		fmt.Println("GET used")
+		parts := strings.Split(r.URL.String(), "/")
+		if parts[4] != "" {
+			// print only the specified webhook by id
+
+			webhookid := parts[4]               // Find webhook id
+			webhook, err := DBReadid(webhookid) // Read the webhook from database
+			if err != nil {
+				http.Error(w, "Error: Not found!", http.StatusBadRequest)
+				return
+			}
+			http.Header.Add(w.Header(), "content-type", "application/json") // json header
+			json.NewEncoder(w).Encode(webhook)                              // Encode it
+		} else {
+			// create list of all webhooks
+			fmt.Println("Get all webhooks used")
+			var webhooks []Webhookreg    // temp storage for all webhooks from db
+			webhooks, err := DBReadall() // read from db into webhooks array
+			if err != nil {
+				http.Error(w, "Error: Failed to read webhooks from DB", http.StatusInternalServerError)
+				return
+			}
+			http.Header.Add(w.Header(), "content-type", "application/json") // json header
+			json.NewEncoder(w).Encode(webhooks)                             // Encode them all
+
+		}
+
+	case http.MethodDelete:
+		fmt.Println("DELETE used")
+		parts := strings.Split(r.URL.String(), "/")
+		if parts[4] != "" {
+			webhookid := parts[4]      // find id of webhook
+			err := DBDelete(webhookid) // delete webhook with this id from database
+			if err != nil {
+				fmt.Println("Failed to delete webhook with id " + webhookid)
+			}
+
+			fmt.Println("Webhook with id" + webhookid + " deleted from database.")
+
+		} else {
+			fmt.Fprintln(w, "No webhook ID was specified", http.StatusBadRequest)
+		}
+
+	default:
+		fmt.Println("DEFAULT used")
+		http.Error(w, "invalid http method used", http.StatusBadRequest)
+	}
 }

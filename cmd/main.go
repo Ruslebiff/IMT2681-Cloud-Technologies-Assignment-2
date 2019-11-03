@@ -9,6 +9,13 @@ import (
 )
 
 func main() {
+	err := assignment2.DBInit()
+	if err != nil {
+		fmt.Println("Failed to initialise database")
+	} else {
+		fmt.Println("Database init OK")
+	}
+
 	port := os.Getenv("PORT") // auto assign port, needed for heroku support
 	if port == "" {
 		port = "8080"
