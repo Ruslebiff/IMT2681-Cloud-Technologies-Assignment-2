@@ -278,8 +278,6 @@ func HandlerWebhooks(w http.ResponseWriter, r *http.Request) {
 		}
 
 		webhook.Time = time.Now()
-		fmt.Println(webhook.Event)
-		fmt.Println(webhook.URL)
 
 		_, err = DBSave(&webhook)
 		if err != nil {
