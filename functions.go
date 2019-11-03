@@ -22,24 +22,6 @@ func countduplicates(arr []string) map[string]int {
 	return arritem
 }
 
-/*
-// CallURL calls given URL with given content and awaits response (status and body).
-func CallURL(url string, content string) {
-	fmt.Println("Attempting invocation of url " + url + " ...")
-	res, err := http.Post(url, "string", bytes.NewReader([]byte(content)))
-	if err != nil {
-		fmt.Println("Error in HTTP request: " + err.Error())
-	}
-	response, err := ioutil.ReadAll(res.Body)
-	if err != nil {
-		fmt.Println("Something is wrong with invocation response: " + err.Error())
-	}
-
-	fmt.Println("Webhook invoked. Received status code " + strconv.Itoa(res.StatusCode) +
-		" and body: " + string(response))
-}
-*/
-
 // CallWebhooks calls the webhooks for the specified event and parameters
 func CallWebhooks(event string, parameters string, timestamp time.Time) {
 	var webhooks []Webhookreg
