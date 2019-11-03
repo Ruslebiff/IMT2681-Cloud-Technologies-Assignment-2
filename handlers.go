@@ -226,12 +226,18 @@ func HandlerLanguages(w http.ResponseWriter, r *http.Request) {
 	}
 	http.Header.Add(w.Header(), "content-type", "application/json") // json header
 	json.NewEncoder(w).Encode(p)                                    // Encode struct to JSON
+
+	// Call to webhooks:
+	CallWebhooks("languages", "Limit = "+limit+" and Auth = "+auth, time.Now())
 }
 
 // HandlerIssues returns the name of the users or labels (see parameters) for a given project
 func HandlerIssues(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Unimplemented handler used")                                        // error to console
 	http.Error(w, "This endpoint is not implemented yet", http.StatusNotImplemented) // error to http
+
+	// Call to webhooks:
+	CallWebhooks("issues", "", time.Now())
 }
 
 // HandlerStatus returns information about availability of invoked service and database connectivity
@@ -267,6 +273,9 @@ func HandlerStatus(w http.ResponseWriter, r *http.Request) {
 
 	http.Header.Add(w.Header(), "content-type", "application/json")
 	json.NewEncoder(w).Encode(s) // Encode struct to JSON
+
+	// Call to webhooks:
+	CallWebhooks("status", "", time.Now())
 }
 
 // HandlerWebhooks handles webhooks
@@ -289,6 +298,9 @@ func HandlerWebhooks(w http.ResponseWriter, r *http.Request) {
 
 		fmt.Println("Webhook " + webhook.URL + " registered")
 
+		// Call to webhooks:
+		CallWebhooks("webhookregistration", "Registered webhook with ID: "+webhook.ID+" for event: "+webhook.Event, time.Now())
+
 	case http.MethodGet:
 		parts := strings.Split(r.URL.String(), "/")
 		if parts[4] != "" {
@@ -302,6 +314,9 @@ func HandlerWebhooks(w http.ResponseWriter, r *http.Request) {
 			}
 			http.Header.Add(w.Header(), "content-type", "application/json") // json header
 			json.NewEncoder(w).Encode(webhook)                              // Encode it
+
+			// Call to webhooks:
+			CallWebhooks("webhookget", "ID: "+webhookid, time.Now())
 		} else {
 			// create list of all webhooks
 			var webhooks []Webhookreg    // temp storage for all webhooks from db
@@ -312,7 +327,8 @@ func HandlerWebhooks(w http.ResponseWriter, r *http.Request) {
 			}
 			http.Header.Add(w.Header(), "content-type", "application/json") // json header
 			json.NewEncoder(w).Encode(webhooks)                             // Encode them all
-
+			// Call to webhooks:
+			CallWebhooks("webhookget", "All registered webhooks", time.Now())
 		}
 
 	case http.MethodDelete:
@@ -322,9 +338,11 @@ func HandlerWebhooks(w http.ResponseWriter, r *http.Request) {
 			err := DBDelete(webhookid) // delete webhook with this id from database
 			if err != nil {
 				fmt.Println("Failed to delete webhook with id " + webhookid)
+				return
 			}
 
 			fmt.Println("Webhook with id" + webhookid + " deleted from database.")
+			CallWebhooks("webhookdelete", "Deleted webhook with id: "+webhookid, time.Now())
 
 		} else {
 			fmt.Fprintln(w, "No webhook ID was specified", http.StatusBadRequest)

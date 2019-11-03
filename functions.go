@@ -39,7 +39,7 @@ func CallWebhooks(event string, parameters string, timestamp time.Time) {
 				fmt.Println("Can not encode: " + err.Error())
 			}
 
-			fmt.Println("Attempting invoation of URL " + webhooks[i].URL + "...")
+			fmt.Println("Webhook call : Invoating URL " + webhooks[i].URL + " due to event: " + webhooks[i].Event)
 
 			resp, err := http.Post(webhooks[i].URL, "json", bytes.NewReader([]byte(requestBody)))
 			if err != nil {
