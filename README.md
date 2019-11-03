@@ -17,7 +17,7 @@ DELETE-request to "/repocheck/v1/webhooks/<webhookid>" to get specific webhook\
 POST-request to "/repocheck/v1/webhooks/" to register new webhook, need JSON body like:\
 {\
     "event": "your-event-type",\
-	"url": "yout-webhook-url"
+	"url": "yout-webhook-url"\
 }
 
 # File descriptions: 
