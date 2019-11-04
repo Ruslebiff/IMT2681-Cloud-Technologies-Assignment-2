@@ -1,3 +1,7 @@
+# COMMENT FOR THE ASSIGNMENT SUBMISSION
+I found the bug that crashed it when running commits. It was due to testing webhooks missing http-protocol. These are deleted from the database now and should not make the app crash any more on the running instance. 
+
+
 # IMT2681_assignment_2
 This is a submission for Assignment 2 in IMT2681 Cloud Technologies at NTNU 2019
 
