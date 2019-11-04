@@ -41,6 +41,9 @@ func HandlerCommits(w http.ResponseWriter, r *http.Request) {
 	url2 := GitLabRoot + "v4/projects?per_page=1"
 
 	resp, err := http.Get(url2 + "&private_token=" + auth)
+	if resp != nil {
+		defer resp.Body.Close()
+	}
 	if err != nil {
 		http.Error(w, "Bad Request", http.StatusBadRequest)
 	}
@@ -55,6 +58,9 @@ func HandlerCommits(w http.ResponseWriter, r *http.Request) {
 
 		pagenumber := strconv.Itoa(i)
 		resp, err := http.Get(url2 + "&page=" + pagenumber + "&private_token=" + auth)
+		if resp != nil {
+			defer resp.Body.Close()
+		}
 		if err != nil {
 			http.Error(w, "Bad Request", http.StatusBadRequest)
 			return
@@ -77,6 +83,9 @@ func HandlerCommits(w http.ResponseWriter, r *http.Request) {
 
 	for _, j := range repos {
 		resp, err := http.Get(url1 + strconv.Itoa(j.ID) + "/repository/commits?private_token=" + auth)
+		if resp != nil {
+			defer resp.Body.Close()
+		}
 		if err != nil {
 			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 			fmt.Println(http.StatusInternalServerError)
@@ -135,6 +144,9 @@ func HandlerLanguages(w http.ResponseWriter, r *http.Request) {
 	url2 := GitLabRoot + "v4/projects?per_page=1"
 
 	resp, err := http.Get(url2 + "&private_token=" + auth)
+	if resp != nil {
+		defer resp.Body.Close()
+	}
 	if err != nil {
 		http.Error(w, "Bad Request", http.StatusBadRequest)
 	}
@@ -149,6 +161,9 @@ func HandlerLanguages(w http.ResponseWriter, r *http.Request) {
 
 		pagenumber := strconv.Itoa(i)
 		resp, err := http.Get(url2 + "&page=" + pagenumber + "&private_token=" + auth)
+		if resp != nil {
+			defer resp.Body.Close()
+		}
 		if err != nil {
 			http.Error(w, "Bad Request", http.StatusBadRequest)
 			return
@@ -172,6 +187,9 @@ func HandlerLanguages(w http.ResponseWriter, r *http.Request) {
 	for _, j := range repos {
 		langmap := make(map[string]float64) // current repo's languages and percentage value
 		resp, err := http.Get(url1 + strconv.Itoa(j.ID) + "/languages?private_token=" + auth)
+		if resp != nil {
+			defer resp.Body.Close()
+		}
 		if err != nil {
 			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 			fmt.Println(http.StatusInternalServerError)
@@ -249,6 +267,9 @@ func HandlerIssues(w http.ResponseWriter, r *http.Request) {
 		// encode it
 
 		resp, err := http.Get(url)
+		if resp != nil {
+			defer resp.Body.Close()
+		}
 		if err != nil {
 			http.Error(w, "Bad Request", http.StatusBadRequest)
 			return
@@ -288,20 +309,23 @@ func HandlerStatus(w http.ResponseWriter, r *http.Request) {
 
 	// GET-request to gGitLab API
 	gitlabget, err := http.Get(GitLabRoot)
+	if gitlabget != nil {
+		defer gitlabget.Body.Close()
+	}
 	if err != nil {
 		http.Error(w, "API lookup failed", http.StatusServiceUnavailable)
 		fmt.Println(http.StatusServiceUnavailable)
 	}
 
 	dbget, err := http.Get(DatabaseRoot)
+	if dbget != nil {
+		defer dbget.Body.Close()
+	}
 	if err != nil {
 		http.Error(w, "Database lookup failed", http.StatusServiceUnavailable)
 		fmt.Println(http.StatusServiceUnavailable)
 
 	}
-
-	// Close connection, prevent resource leak if get-request fails
-	defer gitlabget.Body.Close()
 
 	// Assign values to struct
 	s.GitLab = gitlabget.StatusCode
